@@ -19,28 +19,27 @@ def get_json_response(url, params):
     return response.json()
 
 params = {
-    "itemsPerPage": 200,
-    "sourceMaxCauseCode": 1,
-    "doubtful": "n"
+    "itemsPerPage": 3083,
+    #"sourceMaxCauseCode": 1,
+    #"doubtful": "n"
 }
 
-response = get_json_response('https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/tsunamis/runups', params)
-records = response['items']
+records = []
+for i in range(1,169):
+    response = get_json_response('https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/tsunamis/runups', {"page":i})
+    records += response['items']
 
 print()
 pprint(records)
 print()
 
-# 🔍 Collect all unique keys from all records
 all_keys = set()
 for record in records:
     all_keys.update(record.keys())
 
-# Convert to a sorted list (optional)
 all_keys = sorted(all_keys)
 
-# ✅ Use all_keys instead of records[0].keys()
-with open('output.csv', 'w', newline='', encoding='utf-8') as f:
+with open('output_tsunami_runups.csv', 'w', newline='', encoding='utf-8') as f:
     writer = csv.DictWriter(f, fieldnames=all_keys)
     writer.writeheader()
     writer.writerows(records)
