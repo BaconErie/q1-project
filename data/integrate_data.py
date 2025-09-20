@@ -1,14 +1,26 @@
-import pandas as pd, numpy as np
+import pandas as pd
+import numpy as np
 
 df_runups = pd.read_csv("output_tsunami_runups.csv")
-df_runups['logrunupHt'] = np.log(df_runups['runupHt'] + 1)
+
+col = 'runupHt'
+Q1 = df_runups[col].quantile(0.25)
+Q3 = df_runups[col].quantile(0.75)
+IQR = Q3 - Q1
+lower_bound = Q1 - 1.5 * IQR
+upper_bound = Q3 + 1.5 * IQR
+
+df_runups = df_runups[(df_runups[col] >= lower_bound) & (df_runups[col] <= upper_bound)].copy()
+df_runups['logrunupHt'] = np.log(df_runups[col] + 1)
+count_nan = 0
+threshold = max(df_runups['logrunupHt'])/3
 for index, instance in df_runups.iterrows(): 
-    if np.isnan(instance['logrunupHt']): continue
-    if instance['logrunupHt'] >= 0.0 and instance['logrunupHt'] < 2.08796446:
+    if np.isnan(instance['logrunupHt']): 
+        count_nan += 1; continue
+    if instance['logrunupHt'] >= 0.0 and instance['logrunupHt'] < threshold:
         df_runups.loc[index, 'logrunupHt'] = "s"
-    elif instance['logrunupHt'] >= 2.08796446 and instance['logrunupHt'] < 2*2.08796446:
+    elif instance['logrunupHt'] >= threshold and instance['logrunupHt'] < 2*threshold:
         df_runups.loc[index, 'logrunupHt'] = "m"
     else: 
         df_runups.loc[index, 'logrunupHt'] = "l"
-print((df_runups['logrunupHt'] == "l").sum())
 df_runups.to_csv("output_tsunami_logtransformed_discretized.csv", index=False)
