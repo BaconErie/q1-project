@@ -23,4 +23,5 @@ for index, instance in df_runups.iterrows():
         df_runups.loc[index, 'logrunupHt'] = "m"
     else: 
         df_runups.loc[index, 'logrunupHt'] = "l"
+df_runups = df_runups.drop("runupHt", axis=1)
 df_runups.to_csv("output_tsunami_logtransformed_discretized.csv", index=False)
