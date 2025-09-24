@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 
 df_runups = pd.read_csv("output_tsunami_runups.csv")
-df_runups_proc = pd.read_csv("output_tsunami_logtransformed_discretized_removeposttsunamifactors_discretizenumericids&cats.csv")
 
 col = 'runupHt'
 Q1 = df_runups[col].quantile(0.25)
@@ -28,6 +27,30 @@ for index, instance in df_runups.iterrows():
 
 df_runups = df_runups.drop("runupHt", axis=1)
 
-for col in df_runups.columns:
-    if col not in df_runups_proc.columns:
-        print(col)
+df_runups_linked_to_eq = pd.read_csv("output_tsunami_logtransformed_discretized.csv")
+df_runups_linked_to_eq.insert(len(df_runups_linked_to_eq.columns)-1, "eqMagMb", [np.nan]*len(df_runups_linked_to_eq))
+df_runups_linked_to_eq.insert(len(df_runups_linked_to_eq.columns)-1, "eqMagMl", [np.nan]*len(df_runups_linked_to_eq))
+df_runups_linked_to_eq.insert(len(df_runups_linked_to_eq.columns)-1, "eqMagMs", [np.nan]*len(df_runups_linked_to_eq))
+df_runups_linked_to_eq.insert(len(df_runups_linked_to_eq.columns)-1, "intensity", [np.nan]*len(df_runups_linked_to_eq))
+df_runups_linked_to_eq.insert(len(df_runups_linked_to_eq.columns)-1, "eqDepth", [np.nan]*len(df_runups_linked_to_eq))
+
+df_equakes = pd.read_csv("output_earthquakes.csv").set_index('id')
+to_drop = []
+
+for index, instance in df_runups_linked_to_eq.iterrows():
+    if instance["earthquakeEventId"] in df_equakes.index and not np.isnan(instance['earthquakeEventId']):
+        df_runups_linked_to_eq.loc[index, 'eqMagMb'] = df_equakes.loc[instance['earthquakeEventId'], 'eqMagMb']
+        df_runups_linked_to_eq.loc[index, 'eqMagMl'] = df_equakes.loc[instance['earthquakeEventId'], 'eqMagMl']
+        df_runups_linked_to_eq.loc[index, 'eqMagMs'] = df_equakes.loc[instance['earthquakeEventId'], 'eqMagMs']
+        df_runups_linked_to_eq.loc[index, 'intensity'] = df_equakes.loc[instance['earthquakeEventId'], 'intensity']
+        df_runups_linked_to_eq.loc[index, 'eqDepth'] = df_equakes.loc[instance['earthquakeEventId'], 'eqDepth']
+    else: to_drop.append(index)
+        
+df_runups_linked_to_eq.drop(to_drop)
+df_runups_linked_to_eq.to_csv("output_tsunami_logtransformed_discretized_droppednoneq_addedeqmag2.csv", index=False)
+
+count = 0
+for index, row in df_equakes.iterrows():
+    if np.isnan(row['eqDepth']): count += 1
+print(count)
+#Need to impute missing, drop unnecessary/'cheating' features & fix categorical vars interpreted by weka as numeric
