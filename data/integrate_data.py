@@ -38,16 +38,17 @@ df_equakes = pd.read_csv("output_earthquakes.csv").set_index('id')
 to_drop = []
 
 for index, instance in df_runups_linked_to_eq.iterrows():
-    if instance["earthquakeEventId"] in df_equakes.index and not np.isnan(instance['earthquakeEventId']):
+    if instance["earthquakeEventId"] in df_equakes.index and not pd.isna(instance['earthquakeEventId']):
         df_runups_linked_to_eq.loc[index, 'eqMagMb'] = df_equakes.loc[instance['earthquakeEventId'], 'eqMagMb']
         df_runups_linked_to_eq.loc[index, 'eqMagMl'] = df_equakes.loc[instance['earthquakeEventId'], 'eqMagMl']
         df_runups_linked_to_eq.loc[index, 'eqMagMs'] = df_equakes.loc[instance['earthquakeEventId'], 'eqMagMs']
         df_runups_linked_to_eq.loc[index, 'intensity'] = df_equakes.loc[instance['earthquakeEventId'], 'intensity']
         df_runups_linked_to_eq.loc[index, 'eqDepth'] = df_equakes.loc[instance['earthquakeEventId'], 'eqDepth']
     else: to_drop.append(index)
-        
-df_runups_linked_to_eq.drop(to_drop)
-df_runups_linked_to_eq.to_csv("output_tsunami_logtransformed_discretized_droppednoneq_addedeqmag2.csv", index=False)
+print(to_drop)
+
+df_runups_linked_to_eq.drop(to_drop, inplace=True)
+df_runups_linked_to_eq.to_csv("output_tsunami_logtransformed_discretized_droppednoneq_addedeqmag.csv", index=False)
 
 count = 0
 for index, row in df_equakes.iterrows():

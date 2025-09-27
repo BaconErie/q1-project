@@ -2,7 +2,7 @@ import pandas as pd, numpy as np, matplotlib.pyplot as plt, random
 from sklearn.model_selection import train_test_split
 
 
-file_name = "output_tsunami_logtransformed_discretized_droppednoneq_addedeqmag_dropleakage&ids_dropverymissing_repmissing.csv"
+file_name = "output_tsunami_logtransformed_discretized_droppednoneq_addedepmag_dropleakage&ids_dropextmissing_repmissing.csv"
 
 df = pd.read_csv(file_name, quotechar="'")
 
