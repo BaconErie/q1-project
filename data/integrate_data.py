@@ -13,11 +13,8 @@ upper_bound = Q3 + 1.5 * IQR
 df_runups = df_runups[(df_runups[col] >= lower_bound) & (df_runups[col] <= upper_bound)].copy()
 df_runups = df_runups.dropna(subset=[col])
 df_runups['logrunupHt'] = np.log(df_runups[col] + 1)
-count_nan = 0
 threshold = max(df_runups['logrunupHt'])/3
 for index, instance in df_runups.iterrows(): 
-    if np.isnan(instance['logrunupHt']): 
-        count_nan += 1; continue
     if instance['logrunupHt'] >= 0.0 and instance['logrunupHt'] < threshold:
         df_runups.loc[index, 'logrunupHt'] = "s"
     elif instance['logrunupHt'] >= threshold and instance['logrunupHt'] < 2*threshold:
@@ -27,7 +24,7 @@ for index, instance in df_runups.iterrows():
 
 df_runups = df_runups.drop("runupHt", axis=1)
 
-df_runups_linked_to_eq = pd.read_csv("output_tsunami_logtransformed_discretized.csv")
+df_runups_linked_to_eq = df_runups
 df_runups_linked_to_eq.insert(len(df_runups_linked_to_eq.columns)-1, "eqMagMb", [np.nan]*len(df_runups_linked_to_eq))
 df_runups_linked_to_eq.insert(len(df_runups_linked_to_eq.columns)-1, "eqMagMl", [np.nan]*len(df_runups_linked_to_eq))
 df_runups_linked_to_eq.insert(len(df_runups_linked_to_eq.columns)-1, "eqMagMs", [np.nan]*len(df_runups_linked_to_eq))
@@ -45,13 +42,6 @@ for index, instance in df_runups_linked_to_eq.iterrows():
         df_runups_linked_to_eq.loc[index, 'intensity'] = df_equakes.loc[instance['earthquakeEventId'], 'intensity']
         df_runups_linked_to_eq.loc[index, 'eqDepth'] = df_equakes.loc[instance['earthquakeEventId'], 'eqDepth']
     else: to_drop.append(index)
-print(to_drop)
 
 df_runups_linked_to_eq.drop(to_drop, inplace=True)
 df_runups_linked_to_eq.to_csv("output_tsunami_logtransformed_discretized_droppednoneq_addedeqmag.csv", index=False)
-
-count = 0
-for index, row in df_equakes.iterrows():
-    if np.isnan(row['eqDepth']): count += 1
-print(count)
-#Need to impute missing, drop unnecessary/'cheating' features & fix categorical vars interpreted by weka as numeric
