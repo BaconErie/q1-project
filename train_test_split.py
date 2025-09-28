@@ -5,12 +5,10 @@ from sklearn.model_selection import train_test_split
 file_name = "output_tsunami_logtransformed_discretized_droppednoneq_addedepmag_dropleakage&ids_dropextmissing_repmissing.csv"
 
 df = pd.read_csv(file_name, quotechar='"')
-df_elevation = pd.read_csv("elevation_data.csv")
-df = df.merge(
-    df_elevation[["latitude", "longitude", "elevation"]],
-    on=["latitude", "longitude"],
-    how="left"
-)
+df_elevation = pd.read_csv("tsunami_with_elevation.csv")
+df["elevation"] = df_elevation['elevation']
+df['elevation'] = df['elevation'].fillna(df['elevation'].mean())
+df.to_csv("output_tsunami_logtransformed_discretized_droppednoneq_addedepmag_dropleakage&ids_dropextmissing_repmissing_addelevation.csv", index=False)
 
 x = df.drop(columns=["logrunupHt"])
 y = df['logrunupHt']
