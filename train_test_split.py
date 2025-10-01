@@ -4,11 +4,11 @@ from sklearn.model_selection import train_test_split
 
 file_name = "output_tsunami_logtransformed_discretized_droppednoneq_addedepmag_dropleakage&ids_dropextmissing_repmissing.csv"
 
-df = pd.read_csv(file_name, quotechar='"')
+df = pd.read_csv(file_name, quotechar="'")
 df_elevation = pd.read_csv("tsunami_with_elevation.csv")
 df["elevation"] = df_elevation['elevation']
 df['elevation'] = df['elevation'].fillna(df['elevation'].mean())
-#df.to_csv("output_tsunami_logtransformed_discretized_droppednoneq_addedepmag_dropleakage&ids_dropextmissing_repmissing_addelevation.csv", index=False)
+df.to_csv("output_tsunami_logtransformed_discretized_droppednoneq_addedepmag_dropleakage&ids_dropextmissing_repmissing_addelevation.csv", index=False)
 
 x = df.drop(columns=["logrunupHt"])
 y = df['logrunupHt']
@@ -25,5 +25,5 @@ print(sum(1 for i in full_test["logrunupHt"] if i == "s")/len(full_test), sum(1 
 print(sum(1 for i in df["logrunupHt"] if i == "s")/len(df), sum(1 for i in df["logrunupHt"] if i == "m")/len(df), sum(1 for i in df["logrunupHt"] if i == "l")/len(df))
 
 
-#full_train.to_csv("tsunami_train.csv", index=False)
-#full_test.to_csv("tsunami_test.csv", index=False)
+full_train.to_csv("tsunami_train.csv", index=False)
+full_test.to_csv("tsunami_test.csv", index=False)
