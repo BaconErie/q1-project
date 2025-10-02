@@ -1,11 +1,11 @@
- 0.26409   19 typeMeasurementId
+ 0.33956   19 typeMeasurementId
  0.25631   16 sourceEqMagnitude
  0.1869    22 eqMagMs
  0.18194    4 distFromSource
  0.15387   21 eqMagMb
  0.12051   10 minute
  0.11696    6 hour
- 0.10399   13 regionCode
  0.09369   23 intensity
  0.06438   24 eqDepth
- 0.06292   15 sourceCauseCode
+ 0.0589    15 sourceCauseCode
+ 0.05861   13 regionCode
