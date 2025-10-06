@@ -1,0 +1,12 @@
+69.015     9 longitude
+68.4326    8 locationName
+67.9422    7 latitude
+66.9511   19 typeMeasurementId
+58.8229    4 distFromSource
+56.9838   14 second
+56.151    20 year
+54.4702    1 area
+53.8061   10 minute
+53.4433   16 sourceEqMagnitude
+53.4433   22 eqMagMs
+53.3105   24 eqDepth
